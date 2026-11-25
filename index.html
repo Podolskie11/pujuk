@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Misi Pujuk Sayang</title>
+<!-- versi: auto-email v2 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@600&family=Fredoka:wght@500;700&family=Nunito:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -262,15 +263,16 @@ no.addEventListener('focus',()=>placeNo());
 yes.onclick=()=>{show('s4');burst()};
 
 // ---- ending ----
-const MAIL='https://formsubmit.co/ajax/muhammadhafizuddin110602@gmail.com';
+const MAIL='https://formsubmit.co/ajax/9fd27bb735a6552dbee226ba6d7aaf4c';
 let sent=0;
 const notify=t=>{const st=$('mailSt');st.textContent='Tengah hantar kat Sayang…';
  fetch(MAIL,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},
   body:JSON.stringify({_subject:'💗 Baeby dah pilih: '+t,Pilihan:t,Mesej:sent?'Baeby tukar fikiran, sekarang nak: '+t:'Baeby dah maafkan Sayang! Nak makan: '+t,Masa:new Date().toLocaleString('ms-MY'),_template:'table',_captcha:'false'})})
- .then(r=>r.ok?r.json():Promise.reject()).then(d=>{if(d.success===false||d.success==='false')throw 0;sent++;st.textContent='Dah sampai kat Sayang 💌 Tunggu Sayang datang!'})
- .catch(()=>{st.textContent='Alamak, tak dapat hantar auto. Tekan butang WhatsApp bawah ni ya.'})};
+ .then(r=>r.json()).then(d=>{if(String(d.success)!=='true'){if(/activat/i.test(d.message||''))throw 'act';throw 0}
+  sent++;st.textContent='Dah sampai kat Sayang 💌 Tunggu Sayang datang!';$('sendRow').hidden=true})
+ .catch(e=>{st.textContent=e==='act'?'Email belum activate lagi (Sayang kena tekan Activate dalam Gmail dulu). Guna WhatsApp dulu ya.':'Alamak, tak dapat hantar auto. Tekan butang WhatsApp bawah ni ya.';$('sendRow').hidden=false})};
 const deal=t=>{$('pick').textContent='Deal! '+t+', Sayang belanja!';notify(t);
- $('send').href='https://wa.me/?text='+encodeURIComponent('Sayang, Baeby dah maafkan 💗 Nak makan: '+t+'. Belanja tau! 😋');$('sendRow').hidden=false};
+ $('send').href='https://wa.me/?text='+encodeURIComponent('Sayang, Baeby dah maafkan 💗 Nak makan: '+t+'. Belanja tau! 😋');$('sendRow').hidden=true};
 document.querySelectorAll('#coupons .btn').forEach(b=>b.onclick=()=>{if(b.id==='other'){$('otherF').hidden=false;$('pick').textContent='';$('otherIn').focus();return}$('otherF').hidden=true;deal(b.textContent)});
 $('otherF').addEventListener('submit',e=>{e.preventDefault();const v=$('otherIn').value.trim();if(v)deal(v)});
 $('again').onclick=()=>{$('pick').textContent='';$('otherF').hidden=true;$('sendRow').hidden=true;$('mailSt').textContent='';show('s1')};
