@@ -126,7 +126,8 @@ input{font:16px Nunito,sans-serif;padding:10px 14px;border-radius:999px;border:2
       <button class="btn" type="submit">Ni!</button>
     </form>
     <p id="pick" style="margin-top:14px;font-weight:700"></p>
-    <div class="row" id="sendRow" hidden><a class="btn" id="send" target="_blank" rel="noopener">Hantar jawapan kat Sayang 💌</a></div>
+    <p id="mailSt" style="margin:4px 0 0;font-size:15px"></p>
+    <div class="row" id="sendRow" hidden><a class="btn" id="send" target="_blank" rel="noopener">Atau hantar kat WhatsApp 💬</a></div>
     <button class="btn" id="again" style="margin-top:6px">Main lagi</button>
   </section>
 
@@ -261,11 +262,18 @@ no.addEventListener('focus',()=>placeNo());
 yes.onclick=()=>{show('s4');burst()};
 
 // ---- ending ----
-const deal=t=>{$('pick').textContent='Deal! '+t+', Sayang belanja. Tekan butang bawah ni untuk bagitahu Sayang 💌';
+const MAIL='https://formsubmit.co/ajax/muhammadhafizuddin110602@gmail.com';
+let sent=0;
+const notify=t=>{const st=$('mailSt');st.textContent='Tengah hantar kat Sayang…';
+ fetch(MAIL,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},
+  body:JSON.stringify({_subject:'💗 Baeby dah pilih: '+t,Pilihan:t,Mesej:sent?'Baeby tukar fikiran, sekarang nak: '+t:'Baeby dah maafkan Sayang! Nak makan: '+t,Masa:new Date().toLocaleString('ms-MY'),_template:'table',_captcha:'false'})})
+ .then(r=>r.ok?r.json():Promise.reject()).then(d=>{if(d.success===false||d.success==='false')throw 0;sent++;st.textContent='Dah sampai kat Sayang 💌 Tunggu Sayang datang!'})
+ .catch(()=>{st.textContent='Alamak, tak dapat hantar auto. Tekan butang WhatsApp bawah ni ya.'})};
+const deal=t=>{$('pick').textContent='Deal! '+t+', Sayang belanja!';notify(t);
  $('send').href='https://wa.me/?text='+encodeURIComponent('Sayang, Baeby dah maafkan 💗 Nak makan: '+t+'. Belanja tau! 😋');$('sendRow').hidden=false};
 document.querySelectorAll('#coupons .btn').forEach(b=>b.onclick=()=>{if(b.id==='other'){$('otherF').hidden=false;$('pick').textContent='';$('otherIn').focus();return}$('otherF').hidden=true;deal(b.textContent)});
 $('otherF').addEventListener('submit',e=>{e.preventDefault();const v=$('otherIn').value.trim();if(v)deal(v)});
-$('again').onclick=()=>{$('pick').textContent='';$('otherF').hidden=true;$('sendRow').hidden=true;show('s1')};
+$('again').onclick=()=>{$('pick').textContent='';$('otherF').hidden=true;$('sendRow').hidden=true;$('mailSt').textContent='';show('s1')};
 
 function burst(){
  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
